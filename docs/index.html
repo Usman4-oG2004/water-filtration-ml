@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Water Filtration ML</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-brand">💧 Water Filtration ML</div>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#how">How It Works</a>
+      <a href="#stack">Tech Stack</a>
+      <a href="#team">Team</a>
+      <a href="https://github.com/Usman4-oG2004/water-filtration-ml" target="_blank" class="btn-github">GitHub ↗</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-content">
+      <span class="badge">Machine Learning · Python · scikit-learn</span>
+      <h1>Detect Water Quality Anomalies <span class="highlight">Before They Escalate</span></h1>
+      <p>An unsupervised ML system that monitors water sensor readings in real-time and flags contamination or filter failures automatically.</p>
+      <div class="hero-buttons">
+        <a href="https://github.com/Usman4-oG2004/water-filtration-ml" target="_blank" class="btn-primary">View on GitHub</a>
+        <a href="#how" class="btn-secondary">See How It Works</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="sensor-card" id="ph-card">
+        <div class="sensor-label">pH Level</div>
+        <div class="sensor-value" id="ph-val">7.02</div>
+        <div class="sensor-status normal">NORMAL</div>
+      </div>
+      <div class="sensor-card" id="turb-card">
+        <div class="sensor-label">Turbidity</div>
+        <div class="sensor-value" id="turb-val">1.48 NTU</div>
+        <div class="sensor-status normal">NORMAL</div>
+      </div>
+      <div class="sensor-card anomaly-card" id="cl-card">
+        <div class="sensor-label">Chlorine</div>
+        <div class="sensor-value" id="cl-val">0.03 mg/L</div>
+        <div class="sensor-status anomaly">⚠ ANOMALY</div>
+      </div>
+      <div class="sensor-card" id="flow-card">
+        <div class="sensor-label">Flow Rate</div>
+        <div class="sensor-value" id="flow-val">49.7 L/min</div>
+        <div class="sensor-status normal">NORMAL</div>
+      </div>
+    </div>
+  </header>
+
+  <section id="about" class="section">
+    <div class="container">
+      <h2>What This Project Does</h2>
+      <div class="cards">
+        <div class="card">
+          <div class="card-icon">🔬</div>
+          <h3>Sensor Data Simulation</h3>
+          <p>Generates 1,050 realistic water sensor readings — pH, turbidity, chlorine, and flow rate — with 50 injected anomalies.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🧠</div>
+          <h3>Isolation Forest Model</h3>
+          <p>Trains an unsupervised ML model that learns normal water behaviour and flags deviations without needing labelled data.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📊</div>
+          <h3>Visual Report</h3>
+          <p>Generates a 3-panel dashboard — scatter plots and anomaly score timeline — exported as PNG and CSV.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🚀</div>
+          <h3>CI/CD Pipeline</h3>
+          <p>GitHub Actions runs Pylint, multi-version CI tests, and weekly security scans on every push automatically.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how" class="section section-dark">
+    <div class="container">
+      <h2>How It Works</h2>
+      <div class="steps">
+        <div class="step"><div class="step-num">01</div><div class="step-text"><h3>Generate Data</h3><p>Run <code>generate_data.py</code> to create sensor readings with realistic noise and injected anomalies.</p></div></div>
+        <div class="step-arrow">→</div>
+        <div class="step"><div class="step-num">02</div><div class="step-text"><h3>Train Model</h3><p>Run <code>train_model.py</code> to scale features and train the Isolation Forest on normal sensor patterns.</p></div></div>
+        <div class="step-arrow">→</div>
+        <div class="step"><div class="step-num">03</div><div class="step-text"><h3>Detect Anomalies</h3><p>Run <code>detect_anomalies.py</code> to classify every reading and export a full visual report.</p></div></div>
+      </div>
+      <div class="code-block">
+        <pre>pip install -r requirements.txt
+python generate_data.py
+python train_model.py
+python detect_anomalies.py</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="stack" class="section">
+    <div class="container">
+      <h2>Tech Stack</h2>
+      <div class="stack-grid">
+        <div class="stack-item"><span class="stack-icon">🐍</span><span>Python 3.10+</span></div>
+        <div class="stack-item"><span class="stack-icon">🐼</span><span>pandas</span></div>
+        <div class="stack-item"><span class="stack-icon">🤖</span><span>scikit-learn</span></div>
+        <div class="stack-item"><span class="stack-icon">📈</span><span>matplotlib</span></div>
+        <div class="stack-item"><span class="stack-icon">💾</span><span>joblib</span></div>
+        <div class="stack-item"><span class="stack-icon">⚙️</span><span>GitHub Actions</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="team" class="section section-dark">
+    <div class="container">
+      <h2>Team</h2>
+      <div class="team-grid">
+        <div class="team-card">
+          <img src="https://avatars.githubusercontent.com/u/225272935?v=4" alt="Ali Hassan" class="avatar"/>
+          <h3>Ali Hassan</h3>
+          <p class="role">ML Architecture · Project Lead</p>
+          <a href="https://github.com/alihassan891u-lab" target="_blank" class="btn-github-sm">GitHub ↗</a>
+        </div>
+        <div class="team-card">
+          <img src="https://avatars.githubusercontent.com/u/213504994?v=4" alt="Muhammad Usman" class="avatar"/>
+          <h3>Muhammad Usman</h3>
+          <p class="role">Development · Implementation</p>
+          <a href="https://github.com/Usman4-oG2004" target="_blank" class="btn-github-sm">GitHub ↗</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>💧 Water Filtration ML — Open Source · <a href="https://github.com/Usman4-oG2004/water-filtration-ml" target="_blank">GitHub</a></p>
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>
