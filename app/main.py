@@ -26,7 +26,11 @@ app = FastAPI(title="Water Filtration ML Platform")
 # Get absolute directory path of app/ folder to avoid routing path bugs
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
-app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
+
+# Automatically ensure static directory exists to prevent FastAPI startup crash
+static_dir = os.path.join(BASE_DIR, "static")
+os.makedirs(static_dir, exist_ok=True)
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 # Helper to pre-create default admin account on startup
 @app.on_event("startup")
