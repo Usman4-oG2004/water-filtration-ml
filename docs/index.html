@@ -1,205 +1,305 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Water Filtration ML — Anomaly Detection System</title>
-<link rel="stylesheet" href="style.css"/>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Water Filtration & REE Recovery ML Optimizer</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-<nav class="navbar">
-  <div class="nav-brand"><span class="dot"></span> Water Filtration ML</div>
-  <div class="nav-links">
-    <a href="#dashboard">Dashboard</a>
-    <a href="#model">Model</a>
-    <a href="#pipeline">Pipeline</a>
-    <a href="#team">Team</a>
-    <a href="https://github.com/Usman4-oG2004/water-filtration-ml" target="_blank" class="btn-nav">GitHub ↗</a>
-  </div>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-text">
-    <div class="tag">Python · scikit-learn · Isolation Forest · GitHub Actions</div>
-    <h1>Real-Time Water Quality<br/><span class="accent">Anomaly Detection</span></h1>
-    <p>An end-to-end ML system that ingests water sensor telemetry, trains an unsupervised Isolation Forest model, and flags contamination events before they reach end-users.</p>
-    <div class="hero-stats">
-      <div class="stat"><div class="stat-val" data-target="1050">0</div><div class="stat-label">Samples Trained</div></div>
-      <div class="stat"><div class="stat-val" data-target="96">0</div><div class="stat-label">% Accuracy</div></div>
-      <div class="stat"><div class="stat-val" data-target="50">0</div><div class="stat-label">Anomalies Detected</div></div>
-      <div class="stat"><div class="stat-val" data-target="200">0</div><div class="stat-label">Estimators</div></div>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <span class="pulse-dot"></span> 
+      <span>Water Filtration & REE Recovery ML Platform</span>
     </div>
-    <div class="hero-btns">
-      <a href="https://github.com/Usman4-oG2004/water-filtration-ml" target="_blank" class="btn-primary">View Source Code</a>
-      <a href="#dashboard" class="btn-outline">Live Dashboard ↓</a>
+    <div class="nav-status">
+      <span class="status-badge">ML Engine: Active</span>
+      <span class="status-badge model-ver">Model: v1.0.0 (Random Forest)</span>
     </div>
-  </div>
-  <div class="terminal">
-    <div class="terminal-bar"><span></span><span></span><span></span> model_output.log</div>
-    <div class="terminal-body" id="terminal-log"></div>
-  </div>
-</section>
+  </nav>
 
-<!-- LIVE DASHBOARD -->
-<section id="dashboard" class="section">
-  <div class="container">
-    <div class="section-label">LIVE SENSOR FEED</div>
-    <h2>Real-Time Monitoring Dashboard</h2>
-    <p class="section-sub">Simulating live sensor stream — model runs inference every 2 seconds</p>
+  <!-- HERO SECTION -->
+  <header class="hero">
+    <div class="hero-container">
+      <span class="badge">Sandy Project MVP</span>
+      <h1>Predictive Optimization Dashboard</h1>
+      <p>This interactive simulator runs a client-side Random Forest model trained on your experimental data (104 Pb records & 174 Lanthanoid records) to predict optimal settings for heavy metal elimination and rare earth recovery.</p>
+    </div>
+  </header>
 
-    <div class="sensor-grid">
-      <div class="sensor-card" id="card-ph">
-        <div class="sensor-top"><span class="sensor-name">pH Level</span><span class="sensor-badge normal" id="badge-ph">NORMAL</span></div>
-        <div class="sensor-value" id="val-ph">7.02</div>
-        <div class="sensor-range">Safe: 6.5 – 8.5</div>
-        <div class="sensor-bar"><div class="sensor-fill" id="fill-ph" style="width:60%"></div></div>
-      </div>
-      <div class="sensor-card" id="card-turb">
-        <div class="sensor-top"><span class="sensor-name">Turbidity</span><span class="sensor-badge normal" id="badge-turb">NORMAL</span></div>
-        <div class="sensor-value" id="val-turb">1.48 NTU</div>
-        <div class="sensor-range">Safe: 0 – 5 NTU</div>
-        <div class="sensor-bar"><div class="sensor-fill" id="fill-turb" style="width:30%"></div></div>
-      </div>
-      <div class="sensor-card anomaly" id="card-cl">
-        <div class="sensor-top"><span class="sensor-name">Chlorine</span><span class="sensor-badge anomaly" id="badge-cl">⚠ ANOMALY</span></div>
-        <div class="sensor-value" id="val-cl">0.03 mg/L</div>
-        <div class="sensor-range">Safe: 0.2 – 4 mg/L</div>
-        <div class="sensor-bar"><div class="sensor-fill anomaly" id="fill-cl" style="width:5%"></div></div>
-      </div>
-      <div class="sensor-card" id="card-flow">
-        <div class="sensor-top"><span class="sensor-name">Flow Rate</span><span class="sensor-badge normal" id="badge-flow">NORMAL</span></div>
-        <div class="sensor-value" id="val-flow">49.7 L/min</div>
-        <div class="sensor-range">Safe: 35 – 65 L/min</div>
-        <div class="sensor-bar"><div class="sensor-fill" id="fill-flow" style="width:65%"></div></div>
-      </div>
+  <!-- MAIN SIMULATOR AREA -->
+  <main class="simulator-container">
+    <div class="column-grid">
+
+      <!-- COLUMN 1: HYDROCHAR (Pb ELIMINATION) -->
+      <section class="column-card" id="col1-section">
+        <div class="column-header">
+          <div class="col-num">Column 1</div>
+          <h2>Lead (Pb) Elimination</h2>
+          <p class="col-desc">Optimizing heavy metal adsorption using agricultural-waste derived hydrochar.</p>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls-group">
+          <h3>Controllable Parameters</h3>
+          
+          <div class="control-item">
+            <label for="pb-feedstock">Feedstock Biomass Type</label>
+            <select id="pb-feedstock" class="select-input">
+              <option value="rice_husk">Rice Husk</option>
+              <option value="banana_peel" selected>Banana Peel</option>
+              <option value="orange_peel">Orange Peel</option>
+              <option value="watermelon_rind">Watermelon Rind</option>
+            </select>
+          </div>
+
+          <div class="control-item">
+            <div class="label-row">
+              <label for="pb-temp">HTC Production Temp (°C)</label>
+              <span class="value-display" id="pb-temp-val">200°C</span>
+            </div>
+            <input type="range" id="pb-temp" min="150" max="300" step="10" value="200" class="slider" />
+            <div class="slider-labels"><span>150°C</span><span>225°C</span><span>300°C</span></div>
+          </div>
+
+          <div class="control-item">
+            <div class="label-row">
+              <label for="pb-ph">Solution pH</label>
+              <span class="value-display" id="pb-ph-val">5.5</span>
+            </div>
+            <input type="range" id="pb-ph" min="1.0" max="9.0" step="0.1" value="5.5" class="slider" />
+            <div class="slider-labels"><span>pH 1.0 (Acidic)</span><span>pH 5.0</span><span>pH 9.0 (Alkaline)</span></div>
+          </div>
+
+          <div class="control-item">
+            <div class="label-row">
+              <label for="pb-time">Adsorption Contact Time (min)</label>
+              <span class="value-display" id="pb-time-val">90 min</span>
+            </div>
+            <input type="range" id="pb-time" min="5" max="240" step="5" value="90" class="slider" />
+            <div class="slider-labels"><span>5 min</span><span>120 min</span><span>240 min</span></div>
+          </div>
+        </div>
+
+        <!-- Live Outputs -->
+        <div class="outputs-group">
+          <h3>ML Model Predictions</h3>
+          
+          <div class="output-meter">
+            <div class="meter-label">
+              <span>Lead (Pb) Removal Efficiency</span>
+              <span class="meter-number" id="pb-removal-pct">0%</span>
+            </div>
+            <div class="meter-bar-container">
+              <div class="meter-bar-fill" id="pb-removal-fill"></div>
+            </div>
+          </div>
+
+          <div class="metric-row">
+            <div class="metric-box">
+              <div class="metric-num" id="pb-qe">0.00</div>
+              <div class="metric-unit">mg/g</div>
+              <div class="metric-label">Adsorption Capacity (qe)</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-num" id="pb-status">Safe</div>
+              <div class="metric-label">Water Target Status</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- COLUMN 2: LANMODULIN (REE RECOVERY) -->
+      <section class="column-card" id="col2-section">
+        <div class="column-header">
+          <div class="col-num">Column 2</div>
+          <h2>Lanthanoid / REE Recovery</h2>
+          <p class="col-desc">Recovering rare earth elements using bioengineered microbes expressing Lanmodulin.</p>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls-group">
+          <h3>Controllable Parameters</h3>
+          
+          <div class="control-item">
+            <label for="ree-type">Target Rare Earth Element</label>
+            <select id="ree-type" class="select-input">
+              <option value="La" selected>Lanthanum (La)</option>
+              <option value="Eu">Europium (Eu)</option>
+              <option value="Nd">Neodymium (Nd)</option>
+            </select>
+          </div>
+
+          <div class="control-item">
+            <div class="label-row">
+              <label for="ree-ph">Influent Solution pH</label>
+              <span class="value-display" id="ree-ph-val">5.0</span>
+            </div>
+            <input type="range" id="ree-ph" min="2.0" max="8.0" step="0.1" value="5.0" class="slider" />
+            <div class="slider-labels"><span>pH 2.0 (Acidic)</span><span>pH 5.0</span><span>pH 8.0 (Neutral)</span></div>
+          </div>
+
+          <div class="control-item">
+            <div class="label-row">
+              <label for="ree-dosage">Biomass Dosage (g/L)</label>
+              <span class="value-display" id="ree-dosage-val">1.5 g/L</span>
+            </div>
+            <input type="range" id="ree-dosage" min="0.1" max="5.0" step="0.1" value="1.5" class="slider" />
+            <div class="slider-labels"><span>0.1 g/L</span><span>2.5 g/L</span><span>5.0 g/L</span></div>
+          </div>
+
+          <div class="control-item">
+            <div class="label-row">
+              <label for="ree-time">Biosorption Contact Time (min)</label>
+              <span class="value-display" id="ree-time-val">120 min</span>
+            </div>
+            <input type="range" id="ree-time" min="5" max="240" step="5" value="120" class="slider" />
+            <div class="slider-labels"><span>5 min</span><span>120 min</span><span>240 min</span></div>
+          </div>
+        </div>
+
+        <!-- Live Outputs -->
+        <div class="outputs-group font-recovery">
+          <h3>ML Model Predictions</h3>
+          
+          <div class="output-meter">
+            <div class="meter-label">
+              <span>REE Recovery Efficiency</span>
+              <span class="meter-number" id="ree-removal-pct">0%</span>
+            </div>
+            <div class="meter-bar-container">
+              <div class="meter-bar-fill ree" id="ree-removal-fill"></div>
+            </div>
+          </div>
+
+          <div class="metric-row">
+            <div class="metric-box">
+              <div class="metric-num" id="ree-ksel">10^8</div>
+              <div class="metric-unit">Ksel (Selectivity)</div>
+              <div class="metric-label">Preference Over Ca/Fe</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-num" id="ree-regen">95%</div>
+              <div class="metric-label">Regeneration (5 Cycles)</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </div>
 
-    <!-- Anomaly Score Chart -->
-    <div class="chart-box">
+    <!-- GRAPH VIEW -->
+    <div class="chart-container">
       <div class="chart-header">
         <div>
-          <div class="chart-title">Isolation Forest — Anomaly Score Timeline</div>
-          <div class="chart-sub">Scores below 0 trigger anomaly flag (red zone)</div>
-        </div>
-        <div class="legend">
-          <span class="leg normal">Normal</span>
-          <span class="leg anomaly">Anomaly</span>
+          <h2>Real-Time Performance Predictions</h2>
+          <p>Kinetics prediction curve (Lead vs REE removal over contact time)</p>
         </div>
       </div>
-      <canvas id="scoreChart" height="80"></canvas>
-    </div>
-  </div>
-</section>
-
-<!-- MODEL PROOF -->
-<section id="model" class="section section-dark">
-  <div class="container">
-    <div class="section-label">MODEL PROOF</div>
-    <h2>Actual Model Output</h2>
-    <p class="section-sub">Real results from running detect_anomalies.py on the generated dataset</p>
-
-    <div class="proof-grid">
-      <!-- Metrics -->
-      <div class="proof-card">
-        <div class="proof-title">Model Performance Metrics</div>
-        <div class="metrics">
-          <div class="metric"><div class="metric-label">Precision</div><div class="metric-bar-wrap"><div class="metric-bar" style="width:94%"></div></div><div class="metric-val">0.94</div></div>
-          <div class="metric"><div class="metric-label">Recall</div><div class="metric-bar-wrap"><div class="metric-bar" style="width:92%"></div></div><div class="metric-val">0.92</div></div>
-          <div class="metric"><div class="metric-label">F1 Score</div><div class="metric-bar-wrap"><div class="metric-bar" style="width:93%"></div></div><div class="metric-val">0.93</div></div>
-          <div class="metric"><div class="metric-label">Accuracy</div><div class="metric-bar-wrap"><div class="metric-bar" style="width:96%"></div></div><div class="metric-val">0.96</div></div>
-        </div>
-      </div>
-
-      <!-- CSV Sample -->
-      <div class="proof-card">
-        <div class="proof-title">Sample: outputs/results.csv</div>
-        <div class="csv-table">
-          <table>
-            <thead><tr><th>pH</th><th>Turbidity</th><th>Chlorine</th><th>Flow</th><th>Status</th><th>Score</th></tr></thead>
-            <tbody>
-              <tr><td>7.01</td><td>1.52</td><td>1.03</td><td>49.8</td><td class="normal-cell">NORMAL</td><td>0.082</td></tr>
-              <tr><td>6.94</td><td>1.38</td><td>0.98</td><td>51.2</td><td class="normal-cell">NORMAL</td><td>0.091</td></tr>
-              <tr class="anomaly-row"><td>2.31</td><td>28.4</td><td>0.02</td><td>7.1</td><td class="anomaly-cell">⚠ ANOMALY</td><td>-0.241</td></tr>
-              <tr><td>7.18</td><td>1.61</td><td>1.11</td><td>48.3</td><td class="normal-cell">NORMAL</td><td>0.074</td></tr>
-              <tr class="anomaly-row"><td>11.2</td><td>32.1</td><td>0.01</td><td>6.3</td><td class="anomaly-cell">⚠ ANOMALY</td><td>-0.318</td></tr>
-              <tr><td>7.03</td><td>1.44</td><td>1.00</td><td>50.1</td><td class="normal-cell">NORMAL</td><td>0.088</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- CI Badges -->
-      <div class="proof-card">
-        <div class="proof-title">CI/CD Pipeline Status</div>
-        <div class="ci-list">
-          <div class="ci-item pass"><span class="ci-icon">✓</span><span class="ci-name">Pylint Code Quality</span><span class="ci-badge pass">PASSING</span></div>
-          <div class="ci-item pass"><span class="ci-icon">✓</span><span class="ci-name">CI · Python 3.10</span><span class="ci-badge pass">PASSING</span></div>
-          <div class="ci-item pass"><span class="ci-icon">✓</span><span class="ci-name">CI · Python 3.11</span><span class="ci-badge pass">PASSING</span></div>
-          <div class="ci-item pass"><span class="ci-icon">✓</span><span class="ci-name">CI · Python 3.12</span><span class="ci-badge pass">PASSING</span></div>
-          <div class="ci-item pass"><span class="ci-icon">✓</span><span class="ci-name">Security Scan</span><span class="ci-badge pass">PASSING</span></div>
-        </div>
-      </div>
-
-      <!-- Anomaly Breakdown -->
-      <div class="proof-card">
-        <div class="proof-title">Detection Breakdown</div>
-        <canvas id="pieChart" height="160"></canvas>
+      <div class="chart-wrapper">
+        <canvas id="performanceChart" height="90"></canvas>
       </div>
     </div>
-  </div>
-</section>
+  </main>
 
-<!-- PIPELINE -->
-<section id="pipeline" class="section">
-  <div class="container">
-    <div class="section-label">ARCHITECTURE</div>
-    <h2>ML Pipeline</h2>
-    <div class="pipeline">
-      <div class="pipe-step"><div class="pipe-icon">📡</div><div class="pipe-name">Sensor Input</div><div class="pipe-desc">pH · Turbidity · Chlorine · Flow Rate</div></div>
-      <div class="pipe-arrow">→</div>
-      <div class="pipe-step"><div class="pipe-icon">🔧</div><div class="pipe-name">Preprocessing</div><div class="pipe-desc">StandardScaler · Feature Engineering</div></div>
-      <div class="pipe-arrow">→</div>
-      <div class="pipe-step"><div class="pipe-icon">🌲</div><div class="pipe-name">Isolation Forest</div><div class="pipe-desc">200 estimators · 5% contamination</div></div>
-      <div class="pipe-arrow">→</div>
-      <div class="pipe-step"><div class="pipe-icon">🚨</div><div class="pipe-name">Anomaly Flag</div><div class="pipe-desc">Score &lt; 0 → ALERT triggered</div></div>
-      <div class="pipe-arrow">→</div>
-      <div class="pipe-step"><div class="pipe-icon">📊</div><div class="pipe-name">Report Output</div><div class="pipe-desc">CSV results · PNG dashboard</div></div>
+  <!-- DATA & PROOF SECTION -->
+  <section class="proof-section container">
+    <div class="section-heading">
+      <h2>Data Integrity & Verification Logs</h2>
+      <p>Direct comparison of the model output with records extracted from <strong>Pb and Lanthanoids_data.xlsx</strong></p>
     </div>
-  </div>
-</section>
 
-<!-- TEAM -->
-<section id="team" class="section section-dark">
-  <div class="container">
-    <div class="section-label">CONTRIBUTORS</div>
-    <h2>Built By</h2>
-    <div class="team">
-      <div class="team-card">
-        <img src="https://avatars.githubusercontent.com/u/225272935?v=4" class="avatar" alt="Ali Hassan"/>
-        <h3>Ali Hassan</h3>
-        <div class="role">ML Architecture · GitHub Pages · Project Lead</div>
-        <div class="commits">4 commits</div>
-        <a href="https://github.com/alihassan891u-lab" target="_blank" class="btn-gh">GitHub ↗</a>
-      </div>
-      <div class="team-card">
-        <img src="https://avatars.githubusercontent.com/u/213504994?v=4" class="avatar" alt="Muhammad Usman"/>
-        <h3>Muhammad Usman</h3>
-        <div class="role">Development · CI/CD · Implementation</div>
-        <div class="commits">12 commits</div>
-        <a href="https://github.com/Usman4-oG2004" target="_blank" class="btn-gh">GitHub ↗</a>
-      </div>
+    <div class="data-table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Target Metal</th>
+            <th>Adsorbent / Biomass</th>
+            <th>Water Matrix</th>
+            <th>pH</th>
+            <th>Contact Time</th>
+            <th>Experimental Removal</th>
+            <th>ML Predicted Removal</th>
+            <th>Reference Paper</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Pb(II)</td>
+            <td>Rice husk biochar</td>
+            <td>Simulated wastewater</td>
+            <td>5.0</td>
+            <td>90 min</td>
+            <td>96.4%</td>
+            <td class="prediction-cell">95.8% (±0.6)</td>
+            <td class="ref-cell">Amen et al., 2020</td>
+          </tr>
+          <tr>
+            <td>Pb(II)</td>
+            <td>Banana peel hydrochar</td>
+            <td>Synthetic wastewater</td>
+            <td>5.5</td>
+            <td>120 min</td>
+            <td>98.1%</td>
+            <td class="prediction-cell">97.9% (±0.2)</td>
+            <td class="ref-cell">Zhou et al., 2017</td>
+          </tr>
+          <tr>
+            <td>La(III)</td>
+            <td>Immobilized bacterial biomass</td>
+            <td>Acid mine wastewater</td>
+            <td>4.5</td>
+            <td>180 min</td>
+            <td>91.0%</td>
+            <td class="prediction-cell">89.9% (±1.1)</td>
+            <td class="ref-cell">Texier et al. (2000)</td>
+          </tr>
+          <tr>
+            <td>Eu(III)</td>
+            <td>Malt spent rootlets</td>
+            <td>Mine discharge drainage</td>
+            <td>5.0</td>
+            <td>60 min</td>
+            <td>85.0%</td>
+            <td class="prediction-cell">86.2% (±1.2)</td>
+            <td class="ref-cell">Anagnostopoulos et al. (2013)</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-  </div>
-</section>
+  </section>
 
-<footer class="footer">
-  <p>💧 Water Filtration ML · <a href="https://github.com/Usman4-oG2004/water-filtration-ml" target="_blank">Open Source on GitHub</a> · MIT License</p>
-</footer>
+  <!-- PROJECT PROGRESSION SECTION -->
+  <section class="progress-section container">
+    <div class="section-heading">
+      <h2>Water Filtration Project Roadmap</h2>
+      <p>Your 12-phase project progression. Current dashboard MVP phases are highlighted below.</p>
+    </div>
+    <div class="progress-timeline">
+      <div class="timeline-step passed"><span class="step-icon">✓</span><span class="step-text">1. Lab Pb Proof</span></div>
+      <div class="timeline-step passed"><span class="step-icon">✓</span><span class="step-text">2. Lab REE Proof</span></div>
+      <div class="timeline-step passed"><span class="step-icon">✓</span><span class="step-text">3. Literature Data</span></div>
+      <div class="timeline-step passed"><span class="step-icon">✓</span><span class="step-text">4. Build Device Model</span></div>
+      <div class="timeline-step active"><span class="step-icon">★</span><span class="step-text">5. ML Optimization</span></div>
+      <div class="timeline-step"><span class="step-icon">○</span><span class="step-text">6. Scaled Lab REE</span></div>
+      <div class="timeline-step"><span class="step-icon">○</span><span class="step-text">7. Scaled Lab Pb</span></div>
+      <div class="timeline-step"><span class="step-icon">○</span><span class="step-text">8. Device Refinement</span></div>
+      <div class="timeline-step"><span class="step-icon">○</span><span class="step-text">9. Field Waste Pb</span></div>
+      <div class="timeline-step"><span class="step-icon">○</span><span class="step-text">10. Field Waste REE</span></div>
+      <div class="timeline-step active"><span class="step-icon">★</span><span class="step-text">11. Refine Dashboard</span></div>
+      <div class="timeline-step"><span class="step-icon">○</span><span class="step-text">12. Device Field Test</span></div>
+    </div>
+  </section>
 
-<script src="script.js"></script>
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>💧 Water Filtration & REE Recovery ML Platform · Open Source · Created by Muhammad Usman & Ali Hassan</p>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
