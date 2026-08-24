@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Water Filtration ML Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #0b0f19; }
+    code { font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body class="text-gray-100 min-h-screen flex flex-col">
+
+  <!-- NAVBAR -->
+  <nav class="flex justify-between items-center p-4 bg-gray-900 border-b border-gray-800">
+    <div class="flex items-center gap-2 font-bold text-lg text-sky-400">
+      <span class="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></span>
+      <span>Water Filtration ML Workspace</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <span class="text-xs text-gray-400">Logged in as: <strong class="text-gray-200">{{ user.username }}</strong></span>
+      <a href="/logout" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors">Sign Out</a>
+    </div>
+  </nav>
+
+  <!-- CONTENT -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+    
+    <!-- LEFT & CENTER: SIMULATOR & EXCEL UPLOADER -->
+    <div class="lg:col-span-2 space-y-6">
+      
+      <!-- EXCEL UPLOADER -->
+      <section class="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-xl">
+        <h2 class="text-lg font-bold mb-1">Process Experimental Data</h2>
+        <p class="text-xs text-gray-400 mb-4">Upload an Excel file (.xlsx) containing columns like pH, Temp, Time to annotate it with predictions.</p>
+        
+        <form action="/upload" method="POST" enctype="multipart/form-data" class="border-2 border-dashed border-gray-800 rounded-xl p-6 text-center hover:border-sky-500 transition-colors cursor-pointer relative">
+          <input type="file" name="file" accept=".xlsx, .xls" required onchange="this.form.submit()"
+                 class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+          <div class="space-y-2">
+            <span class="text-3xl">📊</span>
+            <div class="text-sm font-semibold">Drag & drop your Excel file here</div>
+            <div class="text-xs text-gray-500">or click to browse from files (.xlsx, .xls only)</div>
+          </div>
+        </form>
+      </section>
+
+      <!-- DUAL COLUMN SIMULATOR (SANDY'S QUICK TESTER) -->
+      <section class="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-xl space-y-6">
+        <div>
+          <h2 class="text-lg font-bold mb-1">Live Parameter Optimizer</h2>
+          <p class="text-xs text-gray-400">Simulate predictions client-side using formulas derived from the real experimental dataset</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- Column 1 Control -->
+          <div class="bg-gray-950/60 border border-gray-800 rounded-xl p-5 space-y-4">
+            <div class="flex justify-between items-center border-b border-gray-800 pb-2">
+              <span class="text-xs font-bold text-sky-400 uppercase tracking-wider">Column 1</span>
+              <h3 class="font-bold text-sm">Lead (Pb) Elimination</h3>
+            </div>
+
+            <!-- Feedstock Selection -->
+            <div>
+              <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Feedstock Biomass</label>
+              <select id="pb-feedstock" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2 text-sm text-gray-200 outline-none">
+                <option value="rice_husk">Rice Husk</option>
+                <option value="banana_peel" selected>Banana Peel</option>
+                <option value="orange_peel">Orange Peel</option>
+                <option value="watermelon_rind">Watermelon Rind</option>
+              </select>
+            </div>
+
+            <!-- Temp -->
+            <div>
+              <div class="flex justify-between text-xs text-gray-400 mb-1">
+                <span>HTC Production Temp</span>
+                <span id="pb-temp-val" class="font-bold text-sky-400">200°C</span>
+              </div>
+              <input type="range" id="pb-temp" min="150" max="300" step="10" value="200" class="w-full h-1 bg-gray-800 rounded-lg appearance-none cursor-pointer">
+            </div>
+
+            <!-- pH -->
+            <div>
+              <div class="flex justify-between text-xs text-gray-400 mb-1">
+                <span>Solution pH</span>
+                <span id="pb-ph-val" class="font-bold text-sky-400">5.5</span>
+              </div>
+              <input type="range" id="pb-ph" min="1.0" max="9.0" step="0.1" value="5.5" class="w-full h-1 bg-gray-800 rounded-lg appearance-none cursor-pointer">
+            </div>
+
+            <!-- Time -->
+            <div>
+              <div class="flex justify-between text-xs text-gray-400 mb-1">
+                <span>Adsorption Contact Time</span>
+                <span id="pb-time-val" class="font-bold text-sky-400">90 min</span>
+              </div>
+              <input type="range" id="pb-time" min="5" max="240" step="5" value="90" class="w-full h-1 bg-gray-800 rounded-lg appearance-none cursor-pointer">
+            </div>
+
+            <!-- Pb Outputs -->
+            <div class="bg-gray-900 border border-gray-800 rounded-lg p-3 space-y-2">
+              <div class="flex justify-between items-center text-xs font-semibold">
+                <span>Predicted Removal:</span>
+                <span id="pb-removal-pct" class="text-emerald-400 font-bold">0%</span>
+              </div>
+              <div class="w-full bg-gray-850 h-2 rounded overflow-hidden">
+                <div id="pb-removal-fill" class="bg-emerald-500 h-full transition-all duration-300" style="width:0%"></div>
+              </div>
+              <div class="flex justify-between items-center text-xs text-gray-400 pt-1">
+                <span>Capacity (qe): <strong id="pb-qe" class="text-gray-200">0.00</strong> mg/g</span>
+                <span id="pb-status" class="text-emerald-400 font-bold uppercase text-[10px]">SAFE</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Column 2 Control -->
+          <div class="bg-gray-950/60 border border-gray-800 rounded-xl p-5 space-y-4">
+            <div class="flex justify-between items-center border-b border-gray-800 pb-2">
+              <span class="text-xs font-bold text-purple-400 uppercase tracking-wider">Column 2</span>
+              <h3 class="font-bold text-sm">REE/Lanthanide Recovery</h3>
+            </div>
+
+            <!-- REE Selection -->
+            <div>
+              <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Target Element</label>
+              <select id="ree-type" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2 text-sm text-gray-200 outline-none">
+                <option value="La" selected>Lanthanum (La)</option>
+                <option value="Eu">Europium (Eu)</option>
+                <option value="Nd">Neodymium (Nd)</option>
+              </select>
+            </div>
+
+            <!-- pH -->
+            <div>
+              <div class="flex justify-between text-xs text-gray-400 mb-1">
+                <span>Influent pH</span>
+                <span id="ree-ph-val" class="font-bold text-purple-400">5.0</span>
+              </div>
+              <input type="range" id="ree-ph" min="2.0" max="8.0" step="0.1" value="5.0" class="w-full h-1 bg-gray-800 rounded-lg appearance-none cursor-pointer">
+            </div>
+
+            <!-- Dosage -->
+            <div>
+              <div class="flex justify-between text-xs text-gray-400 mb-1">
+                <span>Biomass Dosage</span>
+                <span id="ree-dosage-val" class="font-bold text-purple-400">1.5 g/L</span>
+              </div>
+              <input type="range" id="ree-dosage" min="0.1" max="5.0" step="0.1" value="1.5" class="w-full h-1 bg-gray-800 rounded-lg appearance-none cursor-pointer">
+            </div>
+
+            <!-- Time -->
+            <div>
+              <div class="flex justify-between text-xs text-gray-400 mb-1">
+                <span>Biosorption Contact Time</span>
+                <span id="ree-time-val" class="font-bold text-purple-400">120 min</span>
+              </div>
+              <input type="range" id="ree-time" min="5" max="240" step="5" value="120" class="w-full h-1 bg-gray-800 rounded-lg appearance-none cursor-pointer">
+            </div>
+
+            <!-- REE Outputs -->
+            <div class="bg-gray-900 border border-gray-800 rounded-lg p-3 space-y-2">
+              <div class="flex justify-between items-center text-xs font-semibold">
+                <span>Predicted Recovery:</span>
+                <span id="ree-removal-pct" class="text-purple-400 font-bold">0%</span>
+              </div>
+              <div class="w-full bg-gray-850 h-2 rounded overflow-hidden">
+                <div id="ree-removal-fill" class="bg-purple-500 h-full transition-all duration-300" style="width:0%"></div>
+              </div>
+              <div class="flex justify-between items-center text-xs text-gray-400 pt-1">
+                <span>Selectivity: <strong id="ree-ksel" class="text-gray-200">10^8</strong> Ksel</span>
+                <span>Regeneration: <strong id="ree-regen" class="text-gray-200">95%</strong></span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Chart -->
+        <div class="border-t border-gray-800 pt-6">
+          <canvas id="performanceChart" height="90"></canvas>
+        </div>
+
+      </section>
+
+    </div>
+
+    <!-- RIGHT: HISTORY LOG -->
+    <div class="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-xl flex flex-col h-full">
+      <h2 class="text-lg font-bold mb-1">My Processing History</h2>
+      <p class="text-xs text-gray-400 mb-4">Click download to fetch the ML annotated Excel files.</p>
+      
+      <div class="flex-1 overflow-y-auto space-y-3" id="history-list">
+        <div class="text-center py-8 text-gray-500 text-xs">Loading history...</div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="text-center p-6 text-gray-500 text-xs border-t border-gray-800">
+    💧 Water Filtration ML Platform · Open Source · Created by Muhammad Usman & Ali Hassan
+  </footer>
+
+  <script>
+    // ── Live Model Predictor Functions ───────────────────────────────────────
+    function predictLeadRemoval(feedstock, temp, pH, time) {
+      let baseRemoval = 0.85;
+      if (feedstock === 'rice_husk') baseRemoval = 0.90;
+      if (feedstock === 'orange_peel') baseRemoval = 0.88;
+      if (feedstock === 'watermelon_rind') baseRemoval = 0.82;
+      if (feedstock === 'banana_peel') baseRemoval = 0.86;
+
+      let pHFactor = 1.0 - 0.04 * Math.pow(pH - 5.8, 2);
+      if (pH < 3.0) pHFactor = 0.4 + 0.1 * (pH - 1.0);
+      let tempFactor = 1.0 - 0.000008 * Math.pow(temp - 210, 2);
+      let timeFactor = 0.75 + 0.09 * (time <= 0 ? 0.5 : Math.log10(time));
+
+      let prediction = baseRemoval * pHFactor * tempFactor * timeFactor;
+      prediction = Math.min(0.998, Math.max(0.05, prediction));
+
+      let qe = 25.0 * pHFactor * (0.6 + 0.4 * (temp / 200.0)) * (0.8 + 0.2 * (time <= 0 ? 0.5 : Math.log10(time)));
+      return {
+        removalPct: (prediction * 100).toFixed(1) + "%",
+        removalVal: prediction,
+        qe: qe.toFixed(2),
+        status: prediction > 0.90 ? "SAFE" : (prediction > 0.75 ? "WARNING" : "UNSAFE")
+      };
+    }
+
+    function predictREERecovery(ree, pH, dosage, time) {
+      let baseRecovery = 0.82;
+      if (ree === 'Eu') baseRecovery = 0.88;
+      if (ree === 'Nd') baseRecovery = 0.85;
+
+      let pHFactor = 1.0 - 0.05 * Math.pow(pH - 5.0, 2);
+      if (pH < 3.0) pHFactor = 0.65;
+      let dosageFactor = 0.5 + 0.5 * (1.0 - Math.exp(-1.2 * dosage));
+      let timeFactor = 0.85 + 0.06 * (time <= 0 ? 0.5 : Math.log10(time));
+
+      let prediction = baseRecovery * pHFactor * dosageFactor * timeFactor;
+      prediction = Math.min(0.995, Math.max(0.03, prediction));
+
+      let kselValue = "10^8";
+      if (pH < 3.0 || pH > 7.0) kselValue = "10^6";
+
+      let regen = 95 - 4.5 * (Math.abs(pH - 5.0));
+      regen = Math.min(99, Math.max(50, Math.round(regen)));
+
+      return {
+        removalPct: (prediction * 100).toFixed(1) + "%",
+        removalVal: prediction,
+        ksel: kselValue,
+        regen: regen + "%"
+      };
+    }
+
+    // ── Update UI ────────────────────────────────────────────────────────────
+    function updateDashboard() {
+      const pbFeedstock = document.getElementById("pb-feedstock").value;
+      const pbTemp = parseFloat(document.getElementById("pb-temp").value);
+      const pbPH = parseFloat(document.getElementById("pb-ph").value);
+      const pbTime = parseFloat(document.getElementById("pb-time").value);
+
+      const reeType = document.getElementById("ree-type").value;
+      const reePH = parseFloat(document.getElementById("ree-ph").value);
+      const reeDosage = parseFloat(document.getElementById("ree-dosage").value);
+      const reeTime = parseFloat(document.getElementById("ree-time").value);
+
+      document.getElementById("pb-temp-val").textContent = pbTemp + "°C";
+      document.getElementById("pb-ph-val").textContent = pbPH.toFixed(1);
+      document.getElementById("pb-time-val").textContent = pbTime + " min";
+
+      document.getElementById("ree-ph-val").textContent = reePH.toFixed(1);
+      document.getElementById("ree-dosage-val").textContent = reeDosage.toFixed(1) + " g/L";
+      document.getElementById("ree-time-val").textContent = reeTime + " min";
+
+      const pbResults = predictLeadRemoval(pbFeedstock, pbTemp, pbPH, pbTime);
+      const reeResults = predictREERecovery(reeType, reePH, reeDosage, reeTime);
+
+      document.getElementById("pb-removal-pct").textContent = pbResults.removalPct;
+      const pbFill = document.getElementById("pb-removal-fill");
+      pbFill.style.width = pbResults.removalPct;
+      
+      const statusEl = document.getElementById("pb-status");
+      if (pbResults.removalVal > 0.90) {
+        pbFill.style.backgroundColor = "#10b981";
+        statusEl.className = "text-emerald-400 font-bold uppercase text-[10px]";
+      } else if (pbResults.removalVal > 0.75) {
+        pbFill.style.backgroundColor = "#fbbf24";
+        statusEl.className = "text-yellow-400 font-bold uppercase text-[10px]";
+      } else {
+        pbFill.style.backgroundColor = "#ef4444";
+        statusEl.className = "text-red-400 font-bold uppercase text-[10px]";
+      }
+      statusEl.textContent = pbResults.status;
+
+      document.getElementById("pb-qe").textContent = pbResults.qe;
+      document.getElementById("ree-removal-pct").textContent = reeResults.removalPct;
+      document.getElementById("ree-removal-fill").style.width = reeResults.removalPct;
+      document.getElementById("ree-ksel").textContent = reeResults.ksel;
+      document.getElementById("ree-regen").textContent = reeResults.regen;
+
+      updateChartData(pbFeedstock, pbTemp, pbPH, reeType, reePH, reeDosage);
+    }
+
+    // ── Chart.js ─────────────────────────────────────────────────────────────
+    let perfChart;
+    const timePoints = [5, 15, 30, 45, 60, 90, 120, 180, 240];
+
+    function initChart() {
+      const ctx = document.getElementById("performanceChart").getContext("2d");
+      perfChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: timePoints.map(t => t + " min"),
+          datasets: [
+            { label: 'Lead (Pb) Removal %', data: [], borderColor: '#10b981', borderWidth: 2.5, tension: 0.2, fill: false },
+            { label: 'REE Recovery %', data: [], borderColor: '#a855f7', borderWidth: 2.5, tension: 0.2, fill: false }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { labels: { color: '#e5e7eb' } } },
+          scales: {
+            x: { grid: { color: '#1f2937' }, ticks: { color: '#9ca3af' } },
+            y: { min: 0, max: 100, grid: { color: '#1f2937' }, ticks: { color: '#9ca3af', callback: v => v + "%" } }
+          }
+        }
+      });
+    }
+
+    function updateChartData(pbFeedstock, pbTemp, pbPH, reeType, reePH, reeDosage) {
+      if (!perfChart) return;
+      const pbData = timePoints.map(t => parseFloat(predictLeadRemoval(pbFeedstock, pbTemp, pbPH, t).removalPct));
+      const reeData = timePoints.map(t => parseFloat(predictREERecovery(reeType, reePH, reeDosage, t).removalPct));
+      perfChart.data.datasets[0].data = pbData;
+      perfChart.data.datasets[1].data = reeData;
+      perfChart.update();
+    }
+
+    // ── Fetch History ────────────────────────────────────────────────────────
+    async function loadHistory() {
+      try {
+        const r = await fetch("/api/history");
+        const data = await r.json();
+        const listEl = document.getElementById("history-list");
+        
+        if (data.length === 0) {
+          listEl.innerHTML = '<div class="text-center py-8 text-gray-500 text-xs">No files processed yet. Upload your first sheet above!</div>';
+          return;
+        }
+
+        listEl.innerHTML = data.map(item => `
+          <div class="bg-gray-950/60 border border-gray-800 rounded-xl p-4 flex flex-col justify-between gap-3">
+            <div>
+              <div class="text-xs font-bold text-gray-300 truncate">${item.filename}</div>
+              <div class="text-[10px] text-gray-500">${item.date}</div>
+            </div>
+            <div class="flex justify-between items-center text-[10px] text-gray-400">
+              <span>Rows: <strong>${item.rows}</strong></span>
+              <span>Anomalies: <strong class="text-red-400">${item.anomalies}</strong></span>
+            </div>
+            <a href="/download/${item.id}" target="_blank"
+               class="w-full text-center bg-sky-500 hover:bg-sky-600 text-gray-950 font-bold py-1.5 rounded-lg text-xs transition-colors">
+              Download ML Report
+            </a>
+          </div>
+        `).join("");
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // Bind events
+    const controls = ["pb-feedstock", "pb-temp", "pb-ph", "pb-time", "ree-type", "ree-ph", "ree-dosage", "ree-time"];
+    controls.forEach(id => {
+      document.getElementById(id).addEventListener("input", updateDashboard);
+      document.getElementById(id).addEventListener("change", updateDashboard);
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+      initChart();
+      updateDashboard();
+      loadHistory();
+    });
+  </script>
+</body>
+</html>
