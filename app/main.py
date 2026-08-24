@@ -1,9 +1,14 @@
+import os
+import sys
+
+# Add the current app/ directory to python path to resolve local imports on cloud hosts (like Render)
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 from fastapi import FastAPI, Depends, HTTPException, status, Request, Form, File, UploadFile
 from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
-import os
 import shutil
 import database
 import models
