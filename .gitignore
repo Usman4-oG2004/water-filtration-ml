@@ -1,0 +1,10 @@
+
+# Database
+filtration.db
+filtration.db-journal
+
+# File processing directories
+app/uploads/
+app/outputs/
+uploads/
+outputs/
