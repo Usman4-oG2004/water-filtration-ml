@@ -10,9 +10,10 @@ import models
 import auth
 import ml_engine
 
-# Setup folders
-UPLOAD_DIR = "uploads"
-PROCESSED_DIR = "outputs"
+# Support persistent disk paths for cloud deployment (e.g. Render)
+STORAGE_DIR = os.getenv("STORAGE_DIR", ".")
+UPLOAD_DIR = os.path.join(STORAGE_DIR, "uploads")
+PROCESSED_DIR = os.path.join(STORAGE_DIR, "outputs")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(PROCESSED_DIR, exist_ok=True)
 
@@ -21,10 +22,11 @@ models.Base.metadata.create_all(bind=database.engine)
 
 app = FastAPI(title="Water Filtration ML Platform")
 
-# Mount static and templates
-# For testing we can place them locally
-templates = Jinja2Templates(directory="templates")
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# Mount templates and static folders
+# Get absolute directory path of app/ folder to avoid routing path bugs
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
+app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
 
 # Helper to pre-create default admin account on startup
 @app.on_event("startup")
@@ -114,7 +116,8 @@ async def post_upload(
         raise HTTPException(status_code=400, detail="Only Excel files (.xlsx, .xls) are supported.")
 
     # Save raw upload
-    raw_filename = f"user_{current_user.id}_{int(os.path.getmtime(DATA_PATH) if os.path.exists(DATA_PATH) else 0)}_{file.filename}"
+    import time
+    raw_filename = f"user_{current_user.id}_{int(time.time())}_{file.filename}"
     saved_path = os.path.join(UPLOAD_DIR, raw_filename)
     
     with open(saved_path, "wb") as buffer:
